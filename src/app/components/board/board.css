@@ -79,3 +79,9 @@
     border: 1px solid #007bff;
     background-color: #e6f0ff;
 }
+
+.actions{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}

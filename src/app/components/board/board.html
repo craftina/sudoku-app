@@ -18,7 +18,7 @@
             *ngFor="let cell of row; let colIndex = index" 
             class="cell" 
             [value]="cell === 0 ? '' : cell"
-            [disabled]="cell !== 0"
+            [disabled]="board[rowIndex][colIndex] !== 0"
             [class.prefilled]="cell !== 0" 
             [tabindex]="cell !== 0 ? -1 : 0"
             type="text" 
@@ -26,7 +26,11 @@
             pattern="[1-9]"
             inputmode="numeric" 
             (keydown)="validateInput($event)"
+            (input)="updateCellValue($event, rowIndex, colIndex)"
             /> 
         </div>
+    </div>
+    <div class="actions">
+        <button class="solve-btn" (click)="handleSolve()">Solve</button>
     </div>
 </div>
