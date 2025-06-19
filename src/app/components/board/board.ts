@@ -1,8 +1,7 @@
 import { Component } from '@angular/core';
 import { SudokuApi } from '../../services/sudoku-api';
-import { BoardModel } from '../../models/board.model';
+import { BoardType, Difficulty } from '../../models/board.model';
 import { CommonModule } from '@angular/common';
-import { Difficulty } from '../../models/difficulty.model';
 import { FormsModule } from '@angular/forms';
 
 @Component({
@@ -13,15 +12,16 @@ import { FormsModule } from '@angular/forms';
   styleUrl: './board.css'
 })
 export class Board {
-  board: BoardModel['board'] = [];
-  newBoard: BoardModel['board'] = [];
+  board: BoardType = [];
+  newBoard: BoardType = [];
   errorMessage: string = '';
-  difficulties: string[] = Object.values(Difficulty);
-  selectedDifficulty: Difficulty = Difficulty.Random;
+  difficulties: Difficulty[] = ["easy", "medium", "hard", "random"];
+  selectedDifficulty: Difficulty = "random";
+
   constructor(private api: SudokuApi) { }
 
   ngOnInit() {
-    this.api.getBoard(Difficulty.Random).subscribe({
+    this.api.getBoard('random').subscribe({
       next: (response) => {
         this.board = response.board.map(row => [...row]);
         this.newBoard = response.board.map(row => [...row]);
@@ -69,7 +69,6 @@ export class Board {
   handleSolve(): void {
     this.api.solveBoard(this.newBoard).subscribe({
       next: (res) => {
-        console.log('Solved:', res.solution);
         if (res.status === "solved") {
           this.board = res.solution;
           this.newBoard = res.solution;
@@ -85,10 +84,8 @@ export class Board {
   }
 
   handleValidate(): void {
-    console.log("in validate");
     this.api.validateBoard(this.newBoard).subscribe({
       next: (res) => {
-        console.log('Solved:', res.solution);
         if (res.status === "broken") {
           this.errorMessage = "Your Sudoku is not correct!"
         } else if (res.status === "unsolved") {
@@ -98,7 +95,7 @@ export class Board {
         }
       },
       error: (err) => {
-        console.error('Solving failed', err);
+        console.error('Validating failed', err);
       }
     });
   }

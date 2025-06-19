@@ -83,7 +83,7 @@
     background-color: #e6f0ff;
 }
 
-.actions{
+.actions {
     max-width: 375px;
     display: flex;
     justify-content: center;
@@ -91,11 +91,11 @@
     gap: 20px;
 }
 
-.actions button{
+.actions button {
     padding: 5px 20px;
     font-size: 15px;
 }
 
-.error-message{
+.error-message {
     color: red;
 }
