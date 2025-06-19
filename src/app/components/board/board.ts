@@ -15,6 +15,7 @@ import { FormsModule } from '@angular/forms';
 export class Board {
   board: BoardModel['board'] = [];
   newBoard: BoardModel['board'] = [];
+  errorMessage: string = '';
   difficulties: string[] = Object.values(Difficulty);
   selectedDifficulty: Difficulty = Difficulty.Random;
   constructor(private api: SudokuApi) { }
@@ -34,8 +35,9 @@ export class Board {
   startNewGame(): void {
     this.api.getBoard(this.selectedDifficulty).subscribe({
       next: (response) => {
-        this.board = response.board;
-        this.newBoard = response.board;
+        this.board = response.board.map(row => [...row]);
+        this.newBoard = response.board.map(row => [...row]);
+        this.errorMessage = '';
       },
       error: (err) => {
         console.error('Failed to fetch board', err);
@@ -54,6 +56,7 @@ export class Board {
     const input = event.target as HTMLInputElement | null;
     if (!input) return;
 
+    this.errorMessage = '';
     const value = input.value;
     if (value === '') {
       this.newBoard[row][col] = 0;
@@ -67,10 +70,31 @@ export class Board {
     this.api.solveBoard(this.newBoard).subscribe({
       next: (res) => {
         console.log('Solved:', res.solution);
-        if(res.status === "solved"){
+        if (res.status === "solved") {
           this.board = res.solution;
-        } else{
-          alert("This sudoku is unsolvable!");
+          this.newBoard = res.solution;
+          this.errorMessage = "";
+        } else {
+          this.errorMessage = "Your Sudoku is unsolvable!"
+        }
+      },
+      error: (err) => {
+        console.error('Solving failed', err);
+      }
+    });
+  }
+
+  handleValidate(): void {
+    console.log("in validate");
+    this.api.validateBoard(this.newBoard).subscribe({
+      next: (res) => {
+        console.log('Solved:', res.solution);
+        if (res.status === "broken") {
+          this.errorMessage = "Your Sudoku is not correct!"
+        } else if (res.status === "unsolved") {
+          this.errorMessage = "Your Sudoku is still unsolved! Keep solving!"
+        } else if (res.status = "solved") {
+          this.errorMessage = "Congratulations! You solved your Sudoku!"
         }
       },
       error: (err) => {

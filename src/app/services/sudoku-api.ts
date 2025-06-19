@@ -22,4 +22,11 @@ export class SudokuApi {
       headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
     });
   }
+
+  validateBoard(board: BoardModel['board']): Observable<any> {
+    const body = encodeBoard(board);
+    return this.http.post(`${this.baseUrl}validate`, body, {
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
+    });
+  }
 }

@@ -26,14 +26,17 @@
 .difficulty-title {
     margin: 0;
     padding: 5px 0;
+    font-size: 18px;
 }
 
 .select-difficulty {
     padding: 5px 10px;
+    font-size: 15px;
 }
 
 .new-game-btn {
     padding: 5px 15px;
+    font-size: 15px;
 }
 
 .sudoku-board {
@@ -81,7 +84,18 @@
 }
 
 .actions{
+    max-width: 375px;
     display: flex;
-    justify-content: space-between;
+    justify-content: center;
     align-items: center;
+    gap: 20px;
+}
+
+.actions button{
+    padding: 5px 20px;
+    font-size: 15px;
+}
+
+.error-message{
+    color: red;
 }
