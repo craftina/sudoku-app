@@ -1,8 +1,7 @@
 import { Component } from '@angular/core';
 import { SudokuApi } from '../../services/sudoku-api';
-import { BoardModel } from '../../models/board.model';
+import { BoardType, Difficulty } from '../../models/board.model';
 import { CommonModule } from '@angular/common';
-import { Difficulty } from '../../models/difficulty.model';
 import { FormsModule } from '@angular/forms';
 
 @Component({
@@ -13,14 +12,16 @@ import { FormsModule } from '@angular/forms';
   styleUrl: './board.css'
 })
 export class Board {
-  board: BoardModel['board'] = [];
-  newBoard: BoardModel['board'] = [];
-  difficulties: string[] = Object.values(Difficulty);
-  selectedDifficulty: Difficulty = Difficulty.Random;
+  board: BoardType = [];
+  newBoard: BoardType = [];
+  errorMessage: string = '';
+  difficulties: Difficulty[] = ["easy", "medium", "hard", "random"];
+  selectedDifficulty: Difficulty = "random";
+
   constructor(private api: SudokuApi) { }
 
   ngOnInit() {
-    this.api.getBoard(Difficulty.Random).subscribe({
+    this.api.getBoard('random').subscribe({
       next: (response) => {
         this.board = response.board.map(row => [...row]);
         this.newBoard = response.board.map(row => [...row]);
@@ -34,8 +35,9 @@ export class Board {
   startNewGame(): void {
     this.api.getBoard(this.selectedDifficulty).subscribe({
       next: (response) => {
-        this.board = response.board;
-        this.newBoard = response.board;
+        this.board = response.board.map(row => [...row]);
+        this.newBoard = response.board.map(row => [...row]);
+        this.errorMessage = '';
       },
       error: (err) => {
         console.error('Failed to fetch board', err);
@@ -54,6 +56,7 @@ export class Board {
     const input = event.target as HTMLInputElement | null;
     if (!input) return;
 
+    this.errorMessage = '';
     const value = input.value;
     if (value === '') {
       this.newBoard[row][col] = 0;
@@ -66,15 +69,33 @@ export class Board {
   handleSolve(): void {
     this.api.solveBoard(this.newBoard).subscribe({
       next: (res) => {
-        console.log('Solved:', res.solution);
-        if(res.status === "solved"){
+        if (res.status === "solved") {
           this.board = res.solution;
-        } else{
-          alert("This sudoku is unsolvable!");
+          this.newBoard = res.solution;
+          this.errorMessage = "";
+        } else {
+          this.errorMessage = "Your Sudoku is unsolvable!"
         }
       },
       error: (err) => {
         console.error('Solving failed', err);
+      }
+    });
+  }
+
+  handleValidate(): void {
+    this.api.validateBoard(this.newBoard).subscribe({
+      next: (res) => {
+        if (res.status === "broken") {
+          this.errorMessage = "Your Sudoku is not correct!"
+        } else if (res.status === "unsolved") {
+          this.errorMessage = "Your Sudoku is still unsolved! Keep solving!"
+        } else if (res.status = "solved") {
+          this.errorMessage = "Congratulations! You solved your Sudoku!"
+        }
+      },
+      error: (err) => {
+        console.error('Validating failed', err);
       }
     });
   }
