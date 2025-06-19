@@ -1,17 +1,22 @@
-<h1 class="title">Sudoku</h1>
-<div class="sudoku-board">
-  <div class="row" *ngFor="let row of board; let rowIndex = index">
-    <input
-      *ngFor="let cell of row; let colIndex = index"
-      class="cell"
-      [value]="cell === 0 ? '' : cell"
-      [readOnly]="cell !== 0"
-      [class.prefilled]="cell !== 0"
-      type="text"
-      maxlength="1"
-      pattern="[1-9]"
-      inputmode="numeric"
-    />
-  </div>
-</div>
+<div class="main-container">
+    <h1 class="title">Sudoku</h1>
+    <div class="difficulties">
+        <div class="select-diff-wrapper">
+            <p class="difficulty-title">Difficulty: </p>
+    
+            <select [(ngModel)]="selectedDifficulty" class="select-difficulty">
+                <option *ngFor="let diff of difficulties" [value]="diff">{{ diff }}</option>
+            </select>
+        </div>
 
+
+        <button (click)="startNewGame()" class="new-game-btn">New Game</button>
+    </div>
+    <div class="sudoku-board">
+        <div class="row" *ngFor="let row of board; let rowIndex = index">
+            <input *ngFor="let cell of row; let colIndex = index" class="cell" [value]="cell === 0 ? '' : cell"
+                [readOnly]="cell !== 0" [class.prefilled]="cell !== 0" type="text" maxlength="1" pattern="[1-9]"
+                inputmode="numeric" />
+        </div>
+    </div>
+</div>
