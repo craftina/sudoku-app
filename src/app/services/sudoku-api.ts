@@ -38,11 +38,4 @@ export class SudokuApi {
       headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
     });
   }
-
-  solveBoard(board: BoardModel['board']): Observable<any> {
-    const body = encodeBoard(board);
-    return this.http.post(`${this.baseUrl}solve`, body, {
-      headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
-    });
-  }
 }
