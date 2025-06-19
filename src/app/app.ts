@@ -1,12 +1,13 @@
-import { Component } from '@angular/core';
-import { RouterOutlet } from '@angular/router';
+  import { Component } from '@angular/core';
+  import { Board } from './components/board/board';
 
-@Component({
-  selector: 'app-root',
-  imports: [RouterOutlet],
-  templateUrl: './app.html',
-  styleUrl: './app.css'
-})
-export class App {
-  protected title = 'sudoku-app';
-}
+  @Component({
+    selector: 'app-root',
+    standalone: true,
+    imports: [Board],
+    templateUrl: './app.html',
+    styleUrl: './app.css'
+  })
+  export class App {
+    protected title = 'sudoku-app';
+  }
