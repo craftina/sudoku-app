@@ -16,28 +16,34 @@ export class Board {
   board: BoardModel['board'] = [];
   difficulties: string[] = Object.values(Difficulty);
   selectedDifficulty: Difficulty = Difficulty.Random;
-  constructor(private api: SudokuApi){}
+  constructor(private api: SudokuApi) { }
 
-  ngOnInit(){
-      this.api.getBoard(Difficulty.Random).subscribe({
-    next: (response) => {
-      this.board = response.board;
-    },
-    error: (err) => {
-      console.error('Failed to fetch board', err);
-    }
-  });
+  ngOnInit() {
+    this.api.getBoard(Difficulty.Random).subscribe({
+      next: (response) => {
+        this.board = response.board;
+      },
+      error: (err) => {
+        console.error('Failed to fetch board', err);
+      }
+    });
   }
 
-  startNewGame(): void{
+  startNewGame(): void {
     this.api.getBoard(this.selectedDifficulty).subscribe({
-    next: (response) => {
-      this.board = response.board;
-    },
-    error: (err) => {
-      console.error('Failed to fetch board', err);
-    }
-  });
+      next: (response) => {
+        this.board = response.board;
+      },
+      error: (err) => {
+        console.error('Failed to fetch board', err);
+      }
+    });
   }
 
+  validateInput(event: KeyboardEvent): void {
+    const allowedKeys = ['1', '2', '3', '4', '5', '6', '7', '8', '9', 'Backspace', 'Delete'];
+    if (!allowedKeys.includes(event.key)) {
+      event.preventDefault();
+    }
+  }
 }
